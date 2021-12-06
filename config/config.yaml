@@ -1,0 +1,9 @@
+database:
+  uri: mongodb://localhost:27017
+  name: imageboard
+  collection_boards: boards
+  collection_threads: threads
+  collection_posts: posts
+server:
+  host: localhost
+  port: 8080
