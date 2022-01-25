@@ -17,7 +17,7 @@
 - **Yaml**
 
 ### Thoughts:
-**Well, I use `Golang` (and probably will) when I need to get simple and obvious product. I really like it, because I can create what I need without tons of libs and avoiding extra dependencies. Also Golang is great to fit with *Clean Architecture* because of abstraction through composition. I think that the stucture of this project is pretty good and I will use it again.**
+**Well, I use `Golang` when I need to get simple and obvious product. I really like it, because I can create what I need without tons of libs and avoiding extra dependencies. Also Golang is great to fit with *Clean Architecture* because of abstraction through composition. I think that the stucture of this project is pretty good and I will use it again.**
 
 **I like `MongoDB` because it's flexible and not very complicated to compose effective database query inside repository. Also it doesn't need to create a special abstraction on top of database methods which is definitely an advantage.**
 
