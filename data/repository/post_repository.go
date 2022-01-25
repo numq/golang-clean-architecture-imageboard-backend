@@ -63,7 +63,7 @@ func (r *postRepository) CreatePost(ctx context.Context, post *domain.Post) (str
 		if err != nil {
 			return err
 		}
-		if _, err = r.db.Threads.UpdateOne(ctx, bson.M{"_id": post.ThreadId}, bson.M{"post_count": count}); err != nil {
+		if _, err = r.db.Threads.UpdateOne(ctx, bson.M{"_id": post.ThreadId}, bson.M{"$set": bson.M{"post_count": count}}); err != nil {
 			return err
 		}
 		return nil
