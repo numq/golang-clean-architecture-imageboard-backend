@@ -138,10 +138,10 @@ func (r *boardRepository) DeleteBoard(ctx context.Context, id string) (int64, er
 		if err != nil {
 			return err
 		}
-		if _, err = r.db.Threads.DeleteMany(ctx, bson.M{"board_id": id}); err != nil {
+		if _, err = r.db.Threads.DeleteMany(ctx, bson.D{{"board_id", id}}); err != nil {
 			return err
 		}
-		if _, err = r.db.Posts.DeleteMany(ctx, bson.M{"thread_id": threadId}); err != nil {
+		if _, err = r.db.Posts.DeleteMany(ctx, bson.D{{"thread_id", threadId}}); err != nil {
 			return err
 		}
 		return nil

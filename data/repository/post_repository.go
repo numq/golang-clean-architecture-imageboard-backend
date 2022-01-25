@@ -50,9 +50,24 @@ func (r *postRepository) GetPosts(ctx context.Context, threadId string, skip int
 }
 
 func (r *postRepository) CreatePost(ctx context.Context, post *domain.Post) (string, error) {
-	post.Id = primitive.NewObjectID().Hex()
-	_, err := r.db.Posts.InsertOne(ctx, post)
+	session, err := r.db.Boards.Database().Client().StartSession()
 	if err != nil {
+		return "", err
+	}
+	if err = mongo.WithSession(ctx, session, func(sc mongo.SessionContext) error {
+		post.Id = primitive.NewObjectID().Hex()
+		if _, err := r.db.Posts.InsertOne(ctx, post); err != nil {
+			return err
+		}
+		count, err := r.db.Posts.CountDocuments(ctx, bson.M{"thread_id": post.ThreadId})
+		if err != nil {
+			return err
+		}
+		if _, err = r.db.Threads.UpdateOne(ctx, bson.M{"_id": post.ThreadId}, bson.M{"post_count": count}); err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
 		return "", err
 	}
 	return post.Id, nil
