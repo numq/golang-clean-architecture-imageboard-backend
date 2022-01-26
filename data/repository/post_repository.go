@@ -49,6 +49,14 @@ func (r *postRepository) GetPosts(ctx context.Context, threadId string, skip int
 	return data, nil
 }
 
+func (r *postRepository) GetPostById(ctx context.Context, id string) (*domain.Post, error) {
+	data := new(domain.Post)
+	if err := r.db.Posts.FindOne(ctx, bson.M{"_id": id}).Decode(&data); err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
 func (r *postRepository) CreatePost(ctx context.Context, post *domain.Post) (string, error) {
 	session, err := r.db.Boards.Database().Client().StartSession()
 	if err != nil {

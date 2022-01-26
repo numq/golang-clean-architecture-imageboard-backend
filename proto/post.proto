@@ -6,6 +6,7 @@ option go_package = "./proto";
 
 service PostService{
   rpc GetPosts(GetPostsReq) returns (stream GetPostsRes);
+  rpc GetPostById(GetPostByIdReq) returns (GetPostByIdRes);
   rpc CreatePost(CreatePostReq) returns (CreatePostRes);
   rpc DeletePost(DeletePostReq) returns (DeletePostRes);
 }
@@ -17,6 +18,14 @@ message GetPostsReq{
 }
 
 message GetPostsRes{
+  Post post = 1;
+}
+
+message GetPostByIdReq{
+  string id = 1;
+}
+
+message GetPostByIdRes{
   Post post = 1;
 }
 

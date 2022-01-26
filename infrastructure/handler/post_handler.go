@@ -10,6 +10,7 @@ import (
 
 type PostHandler interface {
 	GetPosts(req *proto.GetPostsReq, stream proto.PostService_GetPostsServer) error
+	GetPostById(ctx context.Context, req *proto.GetPostByIdReq) (*proto.GetPostByIdRes, error)
 	CreatePost(ctx context.Context, req *proto.CreatePostReq) (*proto.CreatePostRes, error)
 	DeletePost(ctx context.Context, req *proto.DeletePostReq) (*proto.DeletePostRes, error)
 }
@@ -36,6 +37,15 @@ func (h *postHandler) GetPosts(req *proto.GetPostsReq, stream proto.PostService_
 		}
 	}
 	return nil
+}
+
+func (h *postHandler) GetPostById(ctx context.Context, req *proto.GetPostByIdReq) (*proto.GetPostByIdRes, error) {
+	post, err := h.useCase.GetPostById(ctx, req.GetId())
+	if err != nil {
+		log.Println(err)
+		return &proto.GetPostByIdRes{}, nil
+	}
+	return &proto.GetPostByIdRes{Post: mapping.PostToProto(post)}, nil
 }
 
 func (h *postHandler) CreatePost(ctx context.Context, req *proto.CreatePostReq) (*proto.CreatePostRes, error) {

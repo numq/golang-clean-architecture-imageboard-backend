@@ -24,6 +24,7 @@ type ThreadRepository interface {
 
 type PostRepository interface {
 	GetPosts(ctx context.Context, threadId string, skip int64, limit int64) ([]*Post, error)
+	GetPostById(ctx context.Context, id string) (*Post, error)
 	CreatePost(ctx context.Context, post *Post) (string, error)
 	DeletePost(ctx context.Context, id string) (int64, error)
 }
