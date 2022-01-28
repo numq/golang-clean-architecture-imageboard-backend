@@ -10,6 +10,7 @@ import (
 	"grpcImageboard/config"
 	"grpcImageboard/data/db"
 	"grpcImageboard/domain"
+	"sort"
 )
 
 type postRepository struct {
@@ -64,6 +65,9 @@ func (r *postRepository) CreatePost(ctx context.Context, post *domain.Post) (str
 	}
 	if err = mongo.WithSession(ctx, session, func(sc mongo.SessionContext) error {
 		post.Id = primitive.NewObjectID().Hex()
+		ids := post.QuoteIds
+		sort.Strings(ids)
+		post.QuoteIds = ids
 		if _, err := r.db.Posts.InsertOne(ctx, post); err != nil {
 			return err
 		}
