@@ -41,7 +41,7 @@ func (r *threadRepository) fetch(ctx context.Context, filter *bson.M, opts *opti
 }
 
 func (r *threadRepository) GetThreads(ctx context.Context, boardId string, skip int64, limit int64) ([]*domain.Thread, error) {
-	filter, opts := &bson.M{"board_id": bson.M{"$eq": boardId}}, options.Find().SetSort(bson.M{"bumped_at": -1}).SetSkip(skip).SetLimit(limit)
+	filter, opts := &bson.M{"board_id": bson.M{"$eq": boardId}}, options.Find().SetSort(bson.M{"bumped_at": 1}).SetSkip(skip).SetLimit(limit)
 	data, err := r.fetch(ctx, filter, opts)
 	if err != nil {
 		return nil, err
