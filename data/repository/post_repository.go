@@ -55,7 +55,10 @@ func (r *postRepository) GetPostById(ctx context.Context, id string) (*domain.Po
 	if err := r.db.Posts.FindOne(ctx, bson.M{"_id": id}).Decode(&data); err != nil {
 		return nil, err
 	}
-	return data, nil
+	if data.Id != "" {
+		return data, nil
+	}
+	return nil, nil
 }
 
 func (r *postRepository) CreatePost(ctx context.Context, post *domain.Post) (string, error) {

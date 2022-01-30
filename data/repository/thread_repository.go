@@ -72,7 +72,10 @@ func (r *threadRepository) GetThreadById(ctx context.Context, id string) (*domai
 	if err := r.db.Threads.FindOne(ctx, bson.M{"_id": id}).Decode(&data); err != nil {
 		return nil, err
 	}
-	return data, nil
+	if data.Id != "" {
+		return data, nil
+	}
+	return nil, nil
 }
 
 func (r *threadRepository) CreateThread(ctx context.Context, thread *domain.Thread) (string, error) {

@@ -60,21 +60,6 @@ func (r *boardRepository) GetBoardsStream(ctx context.Context, changed func([]*d
 			}
 		}
 	}
-
-	/*var result *bson.D
-	for stream.Next(ctx) {
-		if err := stream.Decode(&result); err != nil {
-			fmt.Println(err)
-		}
-		fmt.Println(result)
-
-		filter, opts := &bson.M{}, options.Find()
-		data, err := r.fetch(ctx, filter, opts)
-		if err != nil {
-			fmt.Println(err)
-		}
-		changed(data)
-	}*/
 }
 
 func (r *boardRepository) fetch(ctx context.Context, filter *bson.M, opts *options.FindOptions) ([]*domain.Board, error) {
@@ -110,7 +95,10 @@ func (r *boardRepository) GetBoardById(ctx context.Context, id string) (*domain.
 	if err := r.db.Boards.FindOne(ctx, bson.M{"_id": bson.M{"$eq": id}}).Decode(&data); err != nil {
 		return nil, err
 	}
-	return data, nil
+	if data.Id != "" {
+		return data, nil
+	}
+	return nil, nil
 }
 
 func (r *boardRepository) CreateBoard(ctx context.Context, board *domain.Board) (string, error) {
@@ -134,14 +122,14 @@ func (r *boardRepository) DeleteBoard(ctx context.Context, id string) (int64, er
 			return err
 		}
 		count = result.DeletedCount
-		threadId, err := r.db.Threads.Find(ctx, bson.M{"board_id": id})
-		if err != nil {
+		thread := domain.Thread{}
+		if err := r.db.Threads.FindOne(ctx, bson.M{"board_id": id}).Decode(&thread); err != nil {
 			return err
 		}
 		if _, err = r.db.Threads.DeleteMany(ctx, bson.D{{"board_id", id}}); err != nil {
 			return err
 		}
-		if _, err = r.db.Posts.DeleteMany(ctx, bson.D{{"thread_id", threadId}}); err != nil {
+		if _, err = r.db.Posts.DeleteMany(ctx, bson.D{{"thread_id", thread.Id}}); err != nil {
 			return err
 		}
 		return nil
