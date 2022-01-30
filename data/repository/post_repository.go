@@ -42,7 +42,7 @@ func (r *postRepository) fetch(ctx context.Context, filter *bson.M, opts *option
 }
 
 func (r *postRepository) GetPosts(ctx context.Context, threadId string, skip int64, limit int64) ([]*domain.Post, error) {
-	filter, opts := &bson.M{"thread_id": bson.M{"$eq": threadId}}, options.Find().SetSort(bson.M{"created_at": 1}).SetSkip(skip).SetLimit(limit)
+	filter, opts := &bson.M{"thread_id": bson.M{"$eq": threadId}}, options.Find().SetSort(bson.M{"created_at": -1}).SetSkip(skip).SetLimit(limit)
 	data, err := r.fetch(ctx, filter, opts)
 	if err != nil {
 		return nil, err
