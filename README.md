@@ -3,7 +3,7 @@
 *This is the part of project which includes back-end and mobile client.* 
 
 **Also check:**
-`Android Compose Clean Architecture Client (in progress)`
+[Android Compose Clean Architecture Client](https://github.com/numq/android-clean-architecture-imageboard-client)
 
 ## Project description:
   **Simple anonymous imageboard which allows to create threads, posts and reply to users by quoting their posts.**
