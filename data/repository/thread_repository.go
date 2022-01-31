@@ -41,7 +41,7 @@ func (r *threadRepository) fetch(ctx context.Context, filter *bson.M, opts *opti
 }
 
 func (r *threadRepository) GetThreads(ctx context.Context, boardId string, skip int64, limit int64) ([]*domain.Thread, error) {
-	filter, opts := &bson.M{"board_id": bson.M{"$eq": boardId}}, options.Find().SetSort(bson.M{"bumped_at": 1}).SetSkip(skip).SetLimit(limit)
+	filter, opts := &bson.M{"board_id": bson.M{"$eq": boardId}}, options.Find().SetSort(bson.M{"bumped_at": -1}).SetSkip(skip).SetLimit(limit)
 	data, err := r.fetch(ctx, filter, opts)
 	if err != nil {
 		return nil, err
@@ -50,7 +50,7 @@ func (r *threadRepository) GetThreads(ctx context.Context, boardId string, skip 
 }
 
 func (r *threadRepository) GetHotThreads(ctx context.Context) ([]*domain.Thread, error) {
-	filter, opts := &bson.M{}, options.Find().SetSort(bson.M{"post_count": -1}).SetLimit(10)
+	filter, opts := &bson.M{}, options.Find().SetSort(bson.M{"post_count": -1}).SetLimit(5)
 	data, err := r.fetch(ctx, filter, opts)
 	if err != nil {
 		return nil, err
@@ -59,7 +59,7 @@ func (r *threadRepository) GetHotThreads(ctx context.Context) ([]*domain.Thread,
 }
 
 func (r *threadRepository) GetLatestThreads(ctx context.Context) ([]*domain.Thread, error) {
-	filter, opts := &bson.M{}, options.Find().SetSort(bson.M{"bumped_at": -1}).SetLimit(10)
+	filter, opts := &bson.M{}, options.Find().SetSort(bson.M{"bumped_at": -1}).SetLimit(5)
 	data, err := r.fetch(ctx, filter, opts)
 	if err != nil {
 		return nil, err
