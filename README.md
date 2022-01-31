@@ -9,12 +9,31 @@
   **Simple anonymous imageboard which allows to create threads, posts and reply to users by quoting their posts.**
 
 ## Techs:
+
+*Common:*
 - **Golang**
-- **MongoDB**
-- **gRPC**
-- **Protobuf**
 - **Docker**
 - **Yaml**
+
+*Data:*
+- **Protobuf**
+- **gRPC**
+- **MongoDB**
+
+## Structure:
+- `Config`
+- `Data`\
+*Repository implementation, data sources initialization.*
+- `Domain`\
+*Abstract entities & repositories.*
+- `Infrastructure`\
+*Server & handlers.*
+- `Mapping`\
+*In fact, creating a contract between models and entities.*\
+*It's very important, therefore it's a separate package.*
+- `Proto`
+- `UseCase`\
+*Most likely: use case for each repository method.*
 
 ### Thoughts:
 **Well, I use `Golang` when I need to get simple and obvious product. I really like it, because I can create what I need without tons of libs and avoiding extra dependencies. Also Golang is great to fit with *Clean Architecture* because of abstraction through composition. I think that the stucture of this project is pretty good and I will use it again.**
