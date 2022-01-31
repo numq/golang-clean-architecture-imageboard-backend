@@ -82,7 +82,7 @@ func (r *boardRepository) fetch(ctx context.Context, filter *bson.M, opts *optio
 }
 
 func (r *boardRepository) GetBoards(ctx context.Context, skip int64, limit int64) ([]*domain.Board, error) {
-	filter, opts := &bson.M{}, options.Find().SetSkip(skip).SetLimit(limit)
+	filter, opts := &bson.M{}, options.Find().SetSort(bson.M{"title": 1}).SetSkip(skip).SetLimit(limit)
 	data, err := r.fetch(ctx, filter, opts)
 	if err != nil {
 		return nil, err
