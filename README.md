@@ -15,9 +15,11 @@
 - **Docker**
 - **Yaml**
 
+*Infrastructure:*
+- **gRPC**
+
 *Data:*
 - **Protobuf**
-- **gRPC**
 - **MongoDB**
 
 ## Structure:
