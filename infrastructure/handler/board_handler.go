@@ -2,7 +2,7 @@ package handler
 
 import (
 	"context"
-	"grpcImageboard/mapping"
+	"grpcImageboard/mapper"
 	"grpcImageboard/proto"
 	"grpcImageboard/usecase"
 	"io"
@@ -17,11 +17,12 @@ type BoardHandler interface {
 }
 
 type boardHandler struct {
+	proto.UnimplementedBoardServiceServer
 	useCase usecase.BoardUseCase
 }
 
-func NewBoardHandler(uc usecase.BoardUseCase) BoardHandler {
-	return &boardHandler{uc}
+func NewBoardHandler(uc usecase.BoardUseCase) proto.BoardServiceServer {
+	return &boardHandler{useCase: uc}
 }
 
 func (h *boardHandler) GetBoards(req *proto.GetBoardsReq, stream proto.BoardService_GetBoardsServer) error {
@@ -35,7 +36,7 @@ func (h *boardHandler) GetBoards(req *proto.GetBoardsReq, stream proto.BoardServ
 	}
 	if data != nil {
 		for _, board := range data {
-			if err := stream.Send(&proto.GetBoardsRes{Board: mapping.BoardToProto(board)}); err != nil {
+			if err := stream.Send(&proto.GetBoardsRes{Board: mapper.BoardToProto(board)}); err != nil {
 				log.Println(err)
 				return err
 			}
@@ -50,11 +51,11 @@ func (h *boardHandler) GetBoardById(ctx context.Context, req *proto.GetBoardById
 		log.Println(err)
 		return &proto.GetBoardByIdRes{}, nil
 	}
-	return &proto.GetBoardByIdRes{Board: mapping.BoardToProto(board)}, nil
+	return &proto.GetBoardByIdRes{Board: mapper.BoardToProto(board)}, nil
 }
 
 func (h *boardHandler) CreateBoard(ctx context.Context, req *proto.CreateBoardReq) (*proto.CreateBoardRes, error) {
-	id, err := h.useCase.CreateBoard(ctx, mapping.BoardToModel(req.GetBoard()))
+	id, err := h.useCase.CreateBoard(ctx, mapper.BoardToModel(req.GetBoard()))
 	if err != nil {
 		log.Println(err)
 		return nil, err

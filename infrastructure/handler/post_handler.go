@@ -2,7 +2,7 @@ package handler
 
 import (
 	"context"
-	"grpcImageboard/mapping"
+	"grpcImageboard/mapper"
 	"grpcImageboard/proto"
 	"grpcImageboard/usecase"
 	"log"
@@ -16,11 +16,12 @@ type PostHandler interface {
 }
 
 type postHandler struct {
+	proto.UnimplementedPostServiceServer
 	useCase usecase.PostUseCase
 }
 
-func NewPostHandler(uc usecase.PostUseCase) PostHandler {
-	return &postHandler{uc}
+func NewPostHandler(uc usecase.PostUseCase) proto.PostServiceServer {
+	return &postHandler{useCase: uc}
 }
 
 func (h *postHandler) GetPosts(req *proto.GetPostsReq, stream proto.PostService_GetPostsServer) error {
@@ -31,7 +32,7 @@ func (h *postHandler) GetPosts(req *proto.GetPostsReq, stream proto.PostService_
 	}
 	if data != nil {
 		for _, post := range data {
-			if err := stream.Send(&proto.GetPostsRes{Post: mapping.PostToProto(post)}); err != nil {
+			if err := stream.Send(&proto.GetPostsRes{Post: mapper.PostToProto(post)}); err != nil {
 				log.Println(err)
 			}
 		}
@@ -45,11 +46,11 @@ func (h *postHandler) GetPostById(ctx context.Context, req *proto.GetPostByIdReq
 		log.Println(err)
 		return &proto.GetPostByIdRes{}, nil
 	}
-	return &proto.GetPostByIdRes{Post: mapping.PostToProto(post)}, nil
+	return &proto.GetPostByIdRes{Post: mapper.PostToProto(post)}, nil
 }
 
 func (h *postHandler) CreatePost(ctx context.Context, req *proto.CreatePostReq) (*proto.CreatePostRes, error) {
-	id, err := h.useCase.CreatePost(ctx, mapping.PostToModel(req.GetPost()))
+	id, err := h.useCase.CreatePost(ctx, mapper.PostToModel(req.GetPost()))
 	if err != nil {
 		log.Println(err)
 		return nil, err

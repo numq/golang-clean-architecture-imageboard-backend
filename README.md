@@ -8,6 +8,10 @@
 ## Project description:
   **Simple anonymous imageboard which allows to create threads, posts and reply to users by quoting their posts.**
 
+## Installation
+
+> docker-compose up -d
+> 
 ## Tech:
 
 *Common:*

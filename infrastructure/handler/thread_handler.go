@@ -3,7 +3,7 @@ package handler
 import (
 	"context"
 	"fmt"
-	"grpcImageboard/mapping"
+	"grpcImageboard/mapper"
 	"grpcImageboard/proto"
 	"grpcImageboard/usecase"
 	"io"
@@ -21,11 +21,12 @@ type ThreadHandler interface {
 }
 
 type threadHandler struct {
+	proto.UnimplementedThreadServiceServer
 	useCase usecase.ThreadUseCase
 }
 
-func NewThreadHandler(uc usecase.ThreadUseCase) ThreadHandler {
-	return &threadHandler{uc}
+func NewThreadHandler(uc usecase.ThreadUseCase) proto.ThreadServiceServer {
+	return &threadHandler{useCase: uc}
 }
 
 func (h *threadHandler) GetThreads(req *proto.GetThreadsReq, stream proto.ThreadService_GetThreadsServer) error {
@@ -43,7 +44,7 @@ func (h *threadHandler) GetThreads(req *proto.GetThreadsReq, stream proto.Thread
 	}
 	if data != nil {
 		for _, thread := range data {
-			if err := stream.Send(&proto.GetThreadsRes{Thread: mapping.ThreadToProto(thread)}); err != nil {
+			if err := stream.Send(&proto.GetThreadsRes{Thread: mapper.ThreadToProto(thread)}); err != nil {
 				fmt.Println(err)
 				return err
 			}
@@ -63,7 +64,7 @@ func (h *threadHandler) GetHotThreads(_ *proto.GetHotThreadsReq, stream proto.Th
 	}
 	if data != nil {
 		for _, board := range data {
-			if err := stream.Send(&proto.GetHotThreadsRes{Thread: mapping.ThreadToProto(board)}); err != nil {
+			if err := stream.Send(&proto.GetHotThreadsRes{Thread: mapper.ThreadToProto(board)}); err != nil {
 				log.Println(err)
 				return err
 			}
@@ -83,7 +84,7 @@ func (h *threadHandler) GetLatestThreads(_ *proto.GetLatestThreadsReq, stream pr
 	}
 	if data != nil {
 		for _, board := range data {
-			if err := stream.Send(&proto.GetLatestThreadsRes{Thread: mapping.ThreadToProto(board)}); err != nil {
+			if err := stream.Send(&proto.GetLatestThreadsRes{Thread: mapper.ThreadToProto(board)}); err != nil {
 				log.Println(err)
 				return err
 			}
@@ -98,11 +99,11 @@ func (h *threadHandler) GetThreadById(ctx context.Context, req *proto.GetThreadB
 		log.Println(err)
 		return &proto.GetThreadByIdRes{}, nil
 	}
-	return &proto.GetThreadByIdRes{Thread: mapping.ThreadToProto(thread)}, nil
+	return &proto.GetThreadByIdRes{Thread: mapper.ThreadToProto(thread)}, nil
 }
 
 func (h *threadHandler) CreateThread(ctx context.Context, req *proto.CreateThreadReq) (*proto.CreateThreadRes, error) {
-	id, err := h.useCase.CreateThread(ctx, mapping.ThreadToModel(req.GetThread()))
+	id, err := h.useCase.CreateThread(ctx, mapper.ThreadToModel(req.GetThread()))
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -111,12 +112,12 @@ func (h *threadHandler) CreateThread(ctx context.Context, req *proto.CreateThrea
 }
 
 func (h *threadHandler) UpdateThread(ctx context.Context, req *proto.UpdateThreadReq) (*proto.UpdateThreadRes, error) {
-	thread, err := h.useCase.UpdateThread(ctx, mapping.ThreadToModel(req.GetThread()))
+	thread, err := h.useCase.UpdateThread(ctx, mapper.ThreadToModel(req.GetThread()))
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	return &proto.UpdateThreadRes{Thread: mapping.ThreadToProto(thread)}, nil
+	return &proto.UpdateThreadRes{Thread: mapper.ThreadToProto(thread)}, nil
 }
 
 func (h *threadHandler) DeleteThread(ctx context.Context, req *proto.DeleteThreadReq) (*proto.DeleteThreadRes, error) {

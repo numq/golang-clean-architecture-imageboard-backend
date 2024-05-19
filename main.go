@@ -13,7 +13,6 @@ import (
 )
 
 func main() {
-
 	cfg := config.NewConfig()
 
 	client, connect, disconnect := db.Open(fmt.Sprintf("%s/%s", cfg.Database.DbUri, cfg.Database.DbName))
@@ -34,5 +33,4 @@ func main() {
 		proto.RegisterThreadServiceServer(server, threadHandler)
 		proto.RegisterPostServiceServer(server, postHandler)
 	})
-
 }

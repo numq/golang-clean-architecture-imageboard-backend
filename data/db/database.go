@@ -33,24 +33,28 @@ func Close(client *mongo.Client, ctx context.Context, cancel context.CancelFunc)
 
 func connect(uri string) (*mongo.Client, context.Context, context.CancelFunc) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri).SetDirect(true).SetReplicaSet("rs0"))
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
 	if err != nil {
-		log.Println(err)
-	} else {
-		log.Println("Connected to DB")
+		log.Println("Error connecting to MongoDB:", err)
+		return nil, ctx, cancel
 	}
+
+	err = client.Ping(ctx, nil)
+	if err != nil {
+		log.Println("Failed to ping MongoDB:", err)
+		return nil, ctx, cancel
+	}
+
+	log.Println("Connected to MongoDB")
 	return client, ctx, cancel
 }
 
 func disconnect(client *mongo.Client, ctx context.Context, cancel context.CancelFunc) {
-
 	defer cancel()
 
-	defer func() {
-		if err := client.Disconnect(ctx); err != nil {
-			log.Println(err)
-		} else {
-			log.Println("Disconnected from DB")
-		}
-	}()
+	if err := client.Disconnect(ctx); err != nil {
+		log.Println("Error disconnecting from MongoDB:", err)
+	} else {
+		log.Println("Disconnected from MongoDB")
+	}
 }
